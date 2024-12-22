@@ -15,6 +15,23 @@ const CartItems = () => {
     message: ''
   });
 
+const ProductDisplay = ({ product }) => {
+  return (
+    <div>
+      <h2>{product.name}</h2>
+      <p>{product.price}</p>
+      <div>
+        {product.images.map((image, index) => (
+          <img key={index} src={image} alt={`Product Image ${index + 1}`} />
+        ))}
+      </div>
+      <p>{product.category}</p>
+      <p>{product.rating}</p>
+    </div>
+  );
+};
+
+
   useEffect(() => {
     const fetchCartItems = async () => {
       const userId = sessionStorage.getItem('userId');
