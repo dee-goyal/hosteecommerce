@@ -60,6 +60,13 @@ const AdminSignup = () => {
       const data = await response.json();
 
       if (response.ok) {
+        await fetch('https://ecommercebackend-8gx8.onrender.com/api/sendVerificationEmail', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email: emailId })
+        });
         setShowVerificationOptions(true);
       } else {
         setError(data.message || 'Signup failed. Please try again.');
@@ -78,9 +85,7 @@ const AdminSignup = () => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ 
-          emailId
-        })
+        body: JSON.stringify({ emailId })
       });
 
       if (!response.ok) {
@@ -97,7 +102,7 @@ const AdminSignup = () => {
 
   const handleResendOtp = async () => {
     if (resendDisabled) return;
-    
+
     try {
       const response = await fetch('https://ecommercebackend-8gx8.onrender.com/seller/send-otp', {
         method: 'POST',
@@ -124,7 +129,7 @@ const AdminSignup = () => {
       const newOtp = [...otp];
       newOtp[index] = value;
       setOtp(newOtp);
-      
+
       if (value && index < 5) {
         const nextInput = document.getElementById(`otp-${index + 1}`);
         if (nextInput) nextInput.focus();
