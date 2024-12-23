@@ -178,13 +178,14 @@ const calculateTotal = () => {
     return total + (parseFloat(item.price.replace(/[^\d.]/g, '')) * item.quantity);
   }, 0);
 
-  const discountedTotal = subtotal * (1 - (discountInfo.percentage / 100));
-  const totalAfterDiscount = parseFloat(discountedTotal.toFixed(2));
+  // Apply 10% discount if subtotal is greater than ₹499
+  const discount = subtotal > 499 ? subtotal * 0.10 : 0;
+  const discountedTotal = subtotal - discount;
 
-  // Check if totalAfterDiscount is above ₹499 to apply free shipping
-  const shipping = totalAfterDiscount > 499 ? 'Free : 50; // Assuming 50 is the shipping charge if not free
+  // Apply any additional discount
+  const finalTotal = discountedTotal * (1 - (discountInfo.percentage / 100));
 
-  return (totalAfterDiscount + shipping).toFixed(2);
+  return finalTotal.toFixed(2);
 };
 
   const handleVoucherRedeem = async () => {
@@ -348,18 +349,24 @@ const calculateTotal = () => {
                 total + (parseFloat(item.price.replace(/[^\d.]/g, '')) * (item.quantity || 1)), 
                 0).toFixed(2)}</span>
             </div>
+            {cartItems.reduce((total, item) => 
+                total + (parseFloat(item.price.replace(/[^\d.]/g, '')) * (item.quantity || 1)), 
+                0) > 499 && (
+              <div className="flex flex-col md:flex-row justify-between text-green-600">
+                <span>Discount (10%)</span>
+                <span>- Rs. {((cartItems.reduce((total, item) => 
+                  total + (parseFloat(item.price.replace(/[^\d.]/g, '')) * (item.quantity || 1)), 
+                  0)) * 0.10).toFixed(2)}</span>
+              </div>
+            )}
             {discountInfo.percentage > 0 && (
               <div className="flex flex-col md:flex-row justify-between text-green-600">
-                <span>Discount ({discountInfo.percentage}%)</span>
+                <span>Additional Discount ({discountInfo.percentage}%)</span>
                 <span>- Rs. {(cartItems.reduce((total, item) => 
                   total + (parseFloat(item.price.replace(/[^\d.]/g, '')) * (item.quantity || 1)), 
                   0) * (discountInfo.percentage / 100)).toFixed(2)}</span>
               </div>
             )}
-            <div className="flex flex-col md:flex-row justify-between">
-              <span>Shipping</span>
-              <span>Rs. 0.00</span>
-            </div>
             <div className="flex flex-col md:flex-row justify-between font-bold text-base">
               <span>Total</span>
               <span>Rs. {calculateTotal()}</span>
