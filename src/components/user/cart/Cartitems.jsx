@@ -173,13 +173,19 @@ const ProductDisplay = ({ product }) => {
   };
   
 
-  const calculateTotal = () => {
-    const subtotal = cartItems.reduce((total, item) => {
-      return total + (parseFloat(item.price.replace(/[^\d.]/g, '')) * item.quantity);
-    }, 0);
-    const discountedTotal = subtotal * (1 - (discountInfo.percentage / 100));
-    return discountedTotal.toFixed(2);
-  };
+const calculateTotal = () => {
+  const subtotal = cartItems.reduce((total, item) => {
+    return total + (parseFloat(item.price.replace(/[^\d.]/g, '')) * item.quantity);
+  }, 0);
+
+  const discountedTotal = subtotal * (1 - (discountInfo.percentage / 100));
+  const totalAfterDiscount = parseFloat(discountedTotal.toFixed(2));
+
+  // Check if totalAfterDiscount is above ₹499 to apply free shipping
+  const shipping = totalAfterDiscount > 499 ? 0 : 50; // Assuming 50 is the shipping charge if not free
+
+  return (totalAfterDiscount + shipping).toFixed(2);
+};
 
   const handleVoucherRedeem = async () => {
     try {
